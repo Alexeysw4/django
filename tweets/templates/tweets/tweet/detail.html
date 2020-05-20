@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Твиты{% endblock %}
+
+{% block content %}
+    <a href="{{ tweet.user.get_absolute_url }}">
+        <img src="{{ tweet.user.profile.photo.url }}" alt="{{ tweet.user.get_full_name }}" class="user-detail"
+             width="80px" height="80px">
+        <h1 class="tweet-detail">{{ tweet.user }}</h1>
+    </a>
+    <div class="tweet">
+        <i>{{ tweet.pub_date }}</i>
+        <p>{{ tweet.text|linebreaks }}</p>
+        <a href="{% url 'tweets:like' tweet.id %}" class="btn btn-success">Like</a>
+        <a href="{% url 'tweets:dislike' tweet.id %}" class="btn btn-danger">DisLike</a>
+        <br>
+        <p><b>Лайки: {{ tweet.likes.count }}</b> <b>Дизлайки: {{ tweet.dislikes.count }}</b></p>
+        <a href="{% url 'tweets:reply' tweet.id %}">Ответить</a>
+    </div>
+    {% for reply in tweet.replies.all %}
+        <div class="tweet" style="margin-left: 10%">
+            <img src="{{ reply.user.profile.photo.url }}" alt="{{ reply.user.get_full_name }}">
+            <a href="{{ reply.user.get_absolute_url }}"><span>{{ reply.user.get_full_name }}</span></a>
+            <i>{{ reply.pub_date }}</i>
+            {% if reply.user == request.user %}
+                <a href="{% url 'tweets:delete' reply.id %}"><span class="close"></span></a>
+            {% endif %}
+            <a href="{% url 'tweets:detail' reply.id %}" class="none-style-a"><p>{{ reply.text }}</p></a>
+        </div>
+    {% endfor %}
+{% endblock %}

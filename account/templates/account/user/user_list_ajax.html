@@ -1,0 +1,20 @@
+{% for tweet in tweets %}
+    <div class="tweet" id="{{ tweet.id }}">
+        <img src="{{ tweet.user.profile.photo.url }}" alt="{{ tweet.user.get_full_name }}">
+        <a href="{{ tweet.user.get_absolute_url }}"><span>{{ tweet.user.get_full_name }}</span></a>
+        <i>{{ tweet.pub_date }}</i>
+        {% if tweet.reply_to %}
+            <a href="{% url 'tweets:detail' tweet.reply_to.id %}">&gt;&gt;&gt;{{ tweet.reply_to.user.get_full_name }}</a>
+        {% endif %}
+        {% if tweet.user == request.user %}
+            <a href="{% url 'tweets:delete' tweet.id %}"><span class="close"></span></a>
+        {% endif %}
+
+        <a href="{% url 'tweets:detail' tweet.id %}" class="none-style-a"><p>{{ tweet.text }}</p></a>
+        <a href="{% url 'tweets:reply' tweet.id %}">Ответить</a>
+        <a href="{% url 'tweets:like' tweet.id %}" class="btn btn-success">Like</a>
+        <a href="{% url 'tweets:dislike' tweet.id %}" class="btn btn-danger">DisLike</a>
+        <br>
+        <p><b>Лайки: {{ tweet.likes.count }}</b> <b>Дизлайки: {{ tweet.dislikes.count }}</b></p>
+    </div>
+{% endfor %}

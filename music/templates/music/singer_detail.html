@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    {{ singer.name }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ singer.name }}</h1>
+    <div class="row">
+        <div class="col-3">
+            <img src="{% if singer.image %}{{ singer.image.url }}{% else %}
+                            {% static "img/no_album_image.jpg" %}{% endif %}"
+                 class="user-detail" width="200px" height="200px">
+        </div>
+        <div class="col">
+            <h3>Альбомы:</h3>
+            <ul>
+                {% for album in singer.albums.all %}
+                    <li><a href="{{ album.get_absolute_url }}">{{ album.title }}</a></li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <h2>Треки</h2>
+        <div class="col-12">
+            {% for song in songs %}
+                {% include 'music/song_part.html' with song=song %}
+            {% empty %}
+                Ничего не найдено
+            {% endfor %}
+        </div>
+
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    Треки
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-10">
+            <form action="" method="get">
+                <input type="text" placeholder="Поиск" name="q">
+                <button type="submit" class="btn btn-primary">Найти</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-2">
+            <h3>Жанры</h3>
+            <ul style="list-style-type: none">
+                <li class="">
+                    <a class="{% if not genre %}text-danger{% endif %}" href="{% url "music:song_list" %}">Все</a>
+                </li>
+                {% for g in genres %}
+                    <li class="">
+                        <a class="{% if g.slug == genre.slug %}text-danger{% endif %}"
+                           href="{{ g.get_absolute_url }}">{{ g.name }}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="col-10">
+            <h1 class="mb-2">Музыка</h1>
+            <br>
+            <div class="container mt-2">
+                {% for song in songs %}
+                    {% include 'music/song_part.html' with song=song %}
+                {% empty %}
+                    Ничего не найдено
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block domready %}
+    $('a.track').click(function(e){
+        var _this=this;
+        e.preventDefault();
+        $.post(
+            '{% url "music:add-song" %}',
+            { id: $(this).data('id'), action: $(this).data('action')},
+            function(data){
+                if (data['status']=='ok'){
+                    var previous_action = $(_this).data('action');
+                    // Изменяем переменную действия.
+                    $(_this).data('action', previous_action == 'add' ?'delete' : 'add');
+                    // Изменяем текст ссылки.
+                    $(_this).text(previous_action == 'add' ?'-' : '+');
+                }
+            }
+        );
+    });
+{% endblock %}

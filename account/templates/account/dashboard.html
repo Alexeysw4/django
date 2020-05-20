@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Главная{% endblock %}
+
+{% block content %}
+    <h1>Главная</h1>
+    <ul>
+        <p>Добро пожаловать, {{ user.get_full_name }}! Вы можете:</p> <br>
+        <li>
+            <a href="{% url "edit" %}">отредактировать ваш профиль</a> или
+            <a href="{% url "password_change" %}">изменить пароль</a>.
+
+        </li>
+        <li>
+            <p><a href="{% url 'tweets:create' %}">Создать пост</a></p>
+        </li>
+        <li>
+            <p><a href="{% url 'followers_list' %}">Посмотреть своих подписчиков</a></p>
+        </li>
+        <li>
+            <p><a href="{% url 'following_list' %}">Посмотреть на кого вы подписаны</a></p>
+        </li>
+        <li>
+            <p><a href="{% url 'music:singer_create' %}">Добавить исполнителя</a></p>
+        </li>
+        <li>
+            <p><a href="{% url 'music:album_create' %}">Добавить альбом</a></p>
+        </li>
+        <li>
+            <p><a href="{% url 'music:song_create' %}">Добавить трек</a></p>
+        </li>
+    </ul>
+
+
+    <div class="tweets"> {% include 'account/user/user_list_ajax.html' %}</div>
+{% endblock %}

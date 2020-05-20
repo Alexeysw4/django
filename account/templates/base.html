@@ -1,0 +1,84 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="{% static "css/base.css" %}">
+    <!-- CSS only -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+</head>
+<body>
+<div id="header">
+    <span class="logo">Twitter</span>
+    {% if request.user.is_authenticated %}
+        <ul class="menu">
+            <li {% if section == 'dashboard' %} class="selected" {% endif %}>
+                <a href="{% url "dashboard" %}">Главная</a>
+            </li>
+
+            <li {% if section == 'tweets' %} class="selected" {% endif %}>
+                <a href="{% url "tweets:list" %}">Твиты</a>
+            </li>
+
+            <li {% if section == 'people' %} class="selected" {% endif %}>
+                <a href="{% url "user_list" %}">Люди</a>
+            </li>
+            <li {% if section == 'songs' %} class="selected" {% endif %}>
+                <a href="{% url "music:song_list" %}">Треки</a>
+            </li>
+            <li>
+                <a href="/api/v1/">API</a>
+            </li>
+        </ul>
+    {% endif %}
+
+    <span class="user">
+            {% if request.user.is_authenticated %}
+                Привет {{ request.user.first_name }},
+                <a href="{% url "logout" %}">Выход</a>
+            {% else %}
+                <a href="{% url "login" %}">Вход</a>
+            {% endif %}
+        </span>
+</div>
+
+<div id="content">
+    {% block content %}{% endblock %}
+</div>
+<footer class="footer" style="position: absolute;bottom: 0;left: 0; width: 100%">
+    <div class="bg-info">
+        <p class="text-light text-center">© 2020 Copyright: TwitterClone</p>
+    </div>
+</footer>
+<!-- JS, Popper.js, and jQuery -->
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+<script>
+    var csrftoken = Cookies.get('csrftoken');
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+    $(document).ready(function () {
+        {% block domready %}
+        {% endblock %}
+    });
+</script>
+</body>
+</html>

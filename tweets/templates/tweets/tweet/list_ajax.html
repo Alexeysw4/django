@@ -1,0 +1,37 @@
+{% if not request.user.following.all %}
+    <a href="{% url 'user_list' %}">Подпишитесь на людей, чтобы видеть их твиты</a>
+{% endif %}
+
+
+{% for tweet in tweets %}
+    {% if not tweet.reply_to and tweet.user in request.user.following.all or tweet.user == request.user and not tweet.reply_to %}
+        <div class="tweet" id="{{ tweet.id }}">
+            <img src="{{ tweet.user.profile.photo.url }}" alt="{{ tweet.user.get_full_name }}">
+            <a href="{{ tweet.user.get_absolute_url }}"><span>{{ tweet.user.get_full_name }}</span></a>
+            <i>{{ tweet.pub_date }}</i>
+            {% if tweet.user == request.user %}
+                <a href="{% url 'tweets:delete' tweet.id %}"><span class="close"></span></a>
+            {% endif %}
+
+            <a href="{% url 'tweets:detail' tweet.id %}" class="none-style-a"><p>{{ tweet.text }}</p></a>
+            <a href="{% url 'tweets:reply' tweet.id %}">Ответить</a>
+            <a href="{% url 'tweets:like' tweet.id %}" class="btn btn-success">Like</a>
+            <a href="{% url 'tweets:dislike' tweet.id %}" class="btn btn-danger">DisLike</a>
+            <br>
+            <p><b>Лайки: {{ tweet.likes.count }}</b> <b>Дизлайки: {{ tweet.dislikes.count }}</b></p>
+
+        </div>
+        {% for reply in tweet.replies.all %}
+            <div class="tweet" style="margin-left: 10%">
+                <img src="{{ reply.user.profile.photo.url }}" alt="{{ reply.user.get_full_name }}">
+                <a href="{{ reply.user.get_absolute_url }}"><span>{{ reply.user.get_full_name }}</span></a>
+                <i>{{ reply.pub_date }}</i>
+                <a href="#{{ reply.reply_to.id }}">&gt;&gt;&gt;{{ reply.reply_to.id }}</a>
+                {% if reply.user == request.user %}
+                    <a href="{% url 'tweets:delete' reply.id %}"><span class="close"></span></a>
+                {% endif %}
+                <a href="{% url 'tweets:detail' reply.id %}" class="none-style-a"><p>{{ reply.text }}</p></a>
+            </div>
+        {% endfor %}
+    {% endif %}
+{% endfor %}

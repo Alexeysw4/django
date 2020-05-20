@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+    Альбом {{ album.title }}
+{% endblock %}
+
+{% block content %}
+    <h1>{{ album.title }}</h1>
+    <div class="row">
+        <p>Опубликовано: {{ album.published|date:"d F Y" }}</p>
+        <img src="{% if album.image %}{{ album.image.url }}{% else %}
+                            {% static "img/no_album_image.jpg" %}{% endif %}"
+             class="user-detail" width="200px" height="200px">
+        <p>Автор: <a href="{{ album.author.get_absolute_url }}">{{ album.author.name }}</a></p>
+        <hr>
+
+    </div>
+<h2>Музыка</h2>
+    <div class="row">
+    <div class="col-12">
+        {% for song in album.songs.all %}
+            {% include 'music/song_part.html' with song=song %}
+        {% empty %}
+            Ничего не найдено
+        {% endfor %}
+    </div>
+
+    </div>
+{% endblock %}
